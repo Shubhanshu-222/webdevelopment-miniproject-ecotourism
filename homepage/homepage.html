@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecotour</title>
+    <link rel="stylesheet" href="subscribe.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <header class="navbar">
+        <!-- Wrap the logo in an anchor tag to make it clickable -->
+        <a href="homepage.html" target="_blank" class="logo">
+            <img src="D:/Projects/Semester1/WebTechnology_MidSemProject/Ecotour_logo/Ecotour_leaf.jpeg" alt="Ecotour Logo">
+        </a>
+        <!-- <nav class="nav-links">
+            <a href="blog.html">Blog</a>
+            <a href="offers.html">Offers</a>
+            <a href="destination.html">Destinations</a>
+        </nav> -->
+        <div class="nav-right">
+            <a href="supportpage.html" class="support">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\icons\support_icon.jpeg" alt="Support Icon"> Support
+            </a>
+
+            <!-- <a href="#" class="account-menu">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\icons\my_account_icon.jpeg" alt="Account Icon"> My Account
+            </a> -->
+            
+            <div class="account-menu">
+                <button>
+                    <img alt="Account Icon" height="20" src="D:\Projects\Semester1\WebTechnology_MidSemProject\icons\my_account_icon.jpeg" style="margin-right: 5px;" width="20"/>
+                    My Account
+                    <i class="fas fa-caret-down"></i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="#" id="sign-in-link">Sign in</a>
+                    <a href="#" id="sign-up-link">Sign up</a>
+                </div>
+            </div>
+            <div class="overlay" id="overlay"></div>
+            <div class="login-popup" id="login-popup">
+                <i class="fas fa-times close-btn" id="close-login-btn"></i>
+                <h2>Login</h2>
+                <form id="login-form">
+                    <label for="email">Email</label>
+                    <input id="login-email" name="email" required type="email"/>
+                    <label for="password">Password</label>
+                    <input id="login-password" name="password" required type="password"/>
+                    <a href="#">Forgot Password?</a>
+                    <button class="login-btn" type="submit">LOGIN</button>
+                </form>
+                <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                <p>Not a member? <a href="#" id="signup-link-from-login">Sign up</a></p>
+            </div>
+
+            <div class="popup" id="signup-popup">
+                <div class="signup-popup-content">
+                    <span class="close-btn" id="close-signup-btn"><i class="fas fa-times"></i></span>
+                    <h2>Signup Now</h2>
+                    <form id="signup-form">
+                        <label for="name">Name</label>
+                        <input id="name" name="name" type="text"/>
+                        <label for="email">Email</label>
+                        <input id="signup-email" name="email" type="email"/>
+                        <label for="password">Password</label>
+                        <input id="signup-password" name="password" type="password"/>
+                        <label for="confirm-password">Confirm Password</label>
+                        <input id="confirm-password" name="confirm-password" type="password"/>
+                        <label for="mobile-number">Mobile Number</label>
+                        <input id="mobile-number" name="mobile-number" type="tel"/>
+                        <button type="submit">SIGN UP</button>
+                    </form>
+                    <div class="login-link">Already have an Account? <a href="#" id="login-link-from-signup">Login Now</a></div>
+                </div>
+            </div>
+            
+            <script async defer src="https://apis.google.com/js/platform.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                // Toggle dropdown (if needed)
+                    document.querySelector('.account-menu button').addEventListener('click', function() {
+                    const dropdown = document.querySelector('.account-menu .dropdown-content');
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                });
+
+                // Show login popup
+                document.getElementById('sign-in-link').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    document.getElementById('login-popup').style.display = 'block';
+                    document.getElementById('overlay').style.display = 'block';
+                });
+
+                // Show signup popup
+                document.getElementById('sign-up-link').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    document.getElementById('signup-popup').style.display = 'flex';
+                    document.getElementById('overlay').style.display = 'block';
+                });
+
+                // Close login popup
+                document.getElementById('close-login-btn').addEventListener('click', function() {
+                    document.getElementById('login-popup').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                });
+
+                // Close signup popup
+                document.getElementById('close-signup-btn').addEventListener('click', function() {
+                    document.getElementById('signup-popup').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                });
+
+                // Close popups if the overlay is clicked
+                document.getElementById('overlay').addEventListener('click', function() {
+                    document.getElementById('login-popup').style.display = 'none';
+                    document.getElementById('signup-popup').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                });
+
+                // Handle signup form submission
+                document.getElementById('signup-form').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('signup-email').value;
+                    const password = document.getElementById('signup-password').value;
+                    const confirmPassword = document.getElementById('confirm-password').value;
+                    const mobileNumber = document.getElementById('mobile-number').value;
+
+                    if (password !== confirmPassword) {
+                        alert('Passwords do not match');
+                        return;
+                    }
+
+                    // Retrieve users data from localStorage
+                    let users = JSON.parse(localStorage.getItem('users')) || { users: [] };
+
+                    // Ensure users is an array
+                    if (!Array.isArray(users.users)) {
+                        users.users = [];
+                    }
+
+                    // Check if email already exists
+                    const emailExists = users.users.some(user => user.email === email);
+                    if (emailExists) {
+                        alert('This email is already registered.');
+                        return;
+                    }
+
+                    // Create new user data object
+                    const userData = {
+                        name: name,
+                        email: email,
+                        password: password,
+                        mobileNumber: mobileNumber
+                    };
+
+                    // Save the new user data to localStorage
+                    users.users.push(userData);
+                    localStorage.setItem('users', JSON.stringify({ users: users.users }));
+
+                    alert('Signup successful!');
+                    
+                    // Optionally, clear the form
+                    document.getElementById('signup-form').reset();
+
+                    // Close the signup popup
+                    document.getElementById('signup-popup').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                });
+
+                // Handle login form submission
+                document.getElementById('login-form').addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    const email = document.getElementById('login-email').value.trim();
+                    const password = document.getElementById('login-password').value.trim();
+
+                    console.log('Attempting to log in with:', email, password);
+
+                    let users = JSON.parse(localStorage.getItem('users')) || { users: [] };
+
+                    // Debug log to check if the users data is being retrieved
+                    console.log('Users from localStorage:', users);
+
+                    // Check if email and password match any user in the stored data
+                    const user = users.users.find(user => user.email.trim() === email && user.password.trim() === password);
+
+                    // if (user) {
+                    //     console.log('Login successful for:', email); // Debug log for successful login
+                    //     alert("Login successful!");
+                    //     closePopup(); // Close the login popup after successful login
+                    // } else {
+                    //     console.log('Invalid email or password'); // Debug log for invalid login
+                    //     alert("Invalid email or password.");
+                    // }
+
+                    if (user) {
+                        console.log('Login successful for:', email); // Debug log for successful login
+                        alert("Login successful!");
+                        closePopup(); // Close the login popup after successful login
+                        window.location.href = 'profilepage.html'; // Redirect to profile page
+                    } else {
+                        console.log('Invalid email or password'); // Debug log for invalid login
+                        alert("Invalid email or password.");
+                    }
+
+                });
+
+                // Close the login popup when clicking on the close button
+                document.getElementById('close-login-btn').addEventListener('click', closePopup);
+
+                // Function to close the popup
+                function closePopup() {
+                    document.getElementById('login-popup').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                }
+
+                // Show signup popup from login popup
+                document.getElementById('signup-link-from-login').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    document.getElementById('login-popup').style.display = 'none';
+                    document.getElementById('signup-popup').style.display = 'flex';
+                });
+
+                // Show login popup from signup popup
+                document.getElementById('login-link-from-signup').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    document.getElementById('signup-popup').style.display = 'none';
+                    document.getElementById('login-popup').style.display = 'block';
+                });
+
+                // Optionally, handle Google sign-in (if using Google login)
+                function onSignIn(googleUser) {
+                    var profile = googleUser.getBasicProfile();
+                    console.log('Google ID: ' + profile.getId());
+                    console.log('Name: ' + profile.getName());
+                    console.log('Image URL: ' + profile.getImageUrl());
+                    console.log('Email: ' + profile.getEmail());
+                }
+            });
+
+            </script>
+
+            <!-- <select class="language-select">
+                <option>English</option>
+                <option>Marathi</option>
+                <option>Hindi</option>
+            </select> -->
+        </div>
+    </header>
+
+    
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <button class="close" id="closePopup">&times;</button>
+            <div class="popup-left">
+                <img src="D:/Projects/Semester1/WebTechnology_MidSemProject/sunrise/forest_sunrise_moving clouds.gif" alt="Moving clouds" />
+            </div>
+            <div class="popup-right">
+                <h2>Download Our Sustainable Travel Tips List</h2>
+                <p>Subscribe to get your free tips list, plus sustainable travel emails and content</p>
+                <input type="email" id="email" placeholder="Email" />
+                <button class="subscribe-btn" id="subscribeBtn">Get Your Free Tips List</button>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div class="video-container">
+        <video autoplay muted loop id="backgroundVideo">
+            <source src="D:\Projects\Semester1\WebTechnology_MidSemProject\sunrise\Beautiful Sunrise & The Flowers _ NO COPYRIGHT VIDEO _ NATURE.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="overlay-text">
+            <div class="search-box">
+                <!-- Display text wrapped in a button for clickability -->
+                <button class="eco-destinations-text" onclick="scrollToSection('eco-destinations')">
+                    Our Eco Destinations
+                </button>
+                <button onclick="scrollToSection('eco-destinations')">
+                    <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\icons\search_icon2.jpeg" alt="Search Icon">
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <!-- <div class="map-container">
+        <div id="map"></div>
+    </div>
+
+    <div class="content-below-map">
+        // Your content below the map goes here
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Wait for a moment to ensure proper initialization
+            setTimeout(() => {
+                // Initialize the map
+                const map = L.map('map', {
+                    center: [20.5937, 78.9629],
+                    zoom: 5,
+                    minZoom: 3,
+                    maxZoom: 18,
+                    zoomControl: true,
+                    scrollWheelZoom: true,
+                    dragging: true
+                });
+
+                // Add the main tile layer (Mapbox Streets)
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    tileSize: 256,
+                    zoomOffset: 0,
+                    maxNativeZoom: 19,
+                    maxZoom: 18
+                }).addTo(map);
+
+                // Create a default marker
+                const marker = L.marker([20.5937, 78.9629]).addTo(map);
+
+                // Ensure proper rendering
+                map.invalidateSize();
+
+                // Make the searchLocation function available globally
+                window.searchLocation = function() {
+                    const address = document.getElementById('location').value;
+                    if (!address) {
+                        alert('Please enter a location to search');
+                        return;
+                    }
+
+                    // Add delay between requests to avoid rate limiting
+                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`, {
+                        headers: {
+                            'Accept-Language': 'en-US,en;q=0.9',
+                            'Accept': 'application/json'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                const { lat, lon } = data[0];
+                                map.setView([lat, lon], 13);
+                                marker.setLatLng([lat, lon]);
+                            } else {
+                                alert('Location not found');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error occurred while searching for location');
+                        });
+                };
+
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    map.invalidateSize();
+                });
+            }, 500); // Added a 500ms delay for proper initialization
+        });
+    </script> -->
+
+    
+<!-- 
+    <div class="content">
+        <div style="height: auto; background: lightgray; padding: 20px;">
+            <div class="container">
+                <div class="left-content">
+                    <h2>Welcome to Ecotour</h2>
+                    <p>Travel Eco till it Echoes! Ecotour is a journey undertaken to change the way we travel. To nurture a network that will thrive on the kind of tourism that respects nature, the economy and the local communities.</p>   
+        
+                    <a href="" class="button">Are you a sustainable host? Get in touch!</a>
+                </div>
+                <div class="right-content">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/1i4ioqIaXrE" frameborder="0" allowfullscreen></iframe>
+                    <p>Ecotour is synonymous to Ecotourism. Learn what it is all about.</p>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    
+
+    <div class="content">
+        <div style="height: auto; background: #e6f7e6; padding: 20px;"> <!-- Updated background color -->
+            <div class="container" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                <div class="left-content">
+                    <h2>Welcome to Ecotour</h2><br>
+                    <p>
+                        Travel Eco till it Echoes! Ecotour is a journey undertaken to change the way we travel. To nurture a 
+                        network that will thrive on the kind of tourism that respects nature, the economy, and the local 
+                        communities. 
+                    </p><br>
+                    <p>Explore opportunities to contribute to sustainable tourism practices and enjoy nature 
+                        responsibly.</p> 
+                    <br>
+                    <P>
+                        We follow the regulations like Ecotourism guidelines in and around protected areas 2021, Forest (Conservation) Act, 1980, and are
+                         certified by Global Sustainable Tourism Council (GSTC) and Certification for Sustainable Tourism (CST).
+                    </P><br>
+                    <p>
+                        Join hands with us to make a positive impact on the environment. Together, we can promote eco-friendly 
+                        travel, support local communities, and protect biodiversity. Be the change you want to see in the world!
+                    </p><br><br>
+                    
+                    <a href="" class="button">Are you a sustainable host? Get in touch!</a>
+                </div>
+                <div class="right-content">
+                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/1i4ioqIaXrE" frameborder="0" allowfullscreen></iframe>
+                    <p>Ecotour is synonymous with Ecotourism. Learn what it is all about.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="img-container">
+        <div class="container">
+            <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\forest\ultra-wide-nature2.jpg" alt="Nature Image">
+            <div class="img-overlay-text">Our mission<br>is to save 50,000,000 trees<br>by 2030</div>
+        </div>
+    </div>
+
+    <section class="climate-action">
+        <h2>We Support the Travel Industry’s Climate Action Journey At Every Step</h2>
+        <p>
+            We help the travel industry address its carbon liability, participate in the global net zero transition, and strengthen its climate adaptation and resilience. Our comprehensive solutions empower travelers, tourism companies, and destination leaders throughout every stage of their climate action journey.
+        </p>
+        <div class="actions">
+            <div class="action">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\icons\measureCO2.jpeg" alt="Measure Icon">
+                <h3>Measure</h3>
+                <p>We provide tools to measure the carbon footprint of trips, business operations, and entire destinations.</p>
+            </div>
+            <div class="action">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\icons\reduceC02.jpeg" alt="Reduce Icon">
+                <h3>Reduce</h3>
+                <p>We offer guidance on ways to cut your emissions and achieve your decarbonization goals.</p>
+            </div>
+            <div class="action">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\icons\adapticon1.jpeg" alt="Adapt Icon">
+                <h3>Adapt</h3>
+                <p>We identify strategies to minimize impacts and boost resilience in a changing climate.</p>
+            </div>
+            <div class="action">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\icons\offseticon.jpeg" alt="Offset Icon">
+                <h3>Offset</h3>
+                <p>We offer high-quality carbon offsets to balance unavoidable emissions by financing CO2 mitigation projects.</p>
+            </div>
+            <div class="action">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\icons\communicateicon.jpeg" alt="Communicate Icon">
+                <h3>Communicate</h3>
+                <p>Our trainings, educational materials, and marketing resources help raise climate awareness and foster stakeholder engagement.</p>
+            </div>
+        </div>
+    </section>
+
+
+
+    
+    <section class="carbon-calculator">
+        <div class="calculator-content">
+            <span class="label">For Travelers</span>
+            <h2>Calculate Your Footprint</h2>
+            <p>
+                Our online carbon calculator uses proprietary methodologies built for the travel industry to measure all aspects of your trip, from your flight to your Uber.
+            </p>
+            <button class="calculate-button" onclick="openCarbonFootprint()">CALCULATE</button>
+        </div>
+        <div class="calculator-images">
+            <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\CarbonFootprint\carbonfootprint_final2.jpg" alt="Desktop Carbon Calculator">
+        </div>
+    </section>
+    
+
+
+
+    <section class="eco-destinations" id="eco-destinations">
+        <h2>Popular Eco Destinations</h2>
+        <p>Explore the eco-friendly side of your favorite destinations.</p>
+        <input type="file" id="fileInput" accept=".xlsx, .xls"/>
+        <div class="carousel">
+            <div class="destination-cards" id="destinationCards">
+                <!-- Cards will be injected here -->
+            </div>
+        </div>
+        <button class="view-all-button">See all Eco Destinations</button>
+    </section>
+
+
+
+    <!-- <section class="eco-destinations">
+        <h2>Popular Eco Destinations</h2>
+        <p>Explore the eco-friendly side of your favorite destinations.</p>
+        <div class="carousel">
+            <div class="destination-cards">
+                <div class="card">
+                    <img src="path/to/jaipur.jpg" alt="Jaipur, Rajasthan">
+                    <div class="card-content">
+                        <h3>Jaipur, Rajasthan</h3>
+                        <p>Imagine being on a Hot Air Balloon, thousands of feet above the ground, gazing...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="path/to/goa.jpg" alt="Goa">
+                    <div class="card-content">
+                        <h3>Goa</h3>
+                        <p>When we think of Goa, the first thing that comes to our mind are the beaches. B...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="path/to/gir.jpg" alt="Gir, Gujarat">
+                    <div class="card-content">
+                        <h3>Gir, Gujarat</h3>
+                        <p>Did you know Gir National Park is one of the few places to witness the magnific...</p>
+                    </div>
+                </div>
+                    //Add more cards here
+            </div>
+        </div>
+        <button class="view-all-button">See all Eco Destinations</button>
+    </section> -->
+    
+
+
+    <section class="our-partners" id="our-partners">
+        <h2>Our Partners</h2>
+        <p>Meet our esteemed partners working towards eco-friendly travel.</p>
+        <input type="file" id="partnersFileInput" accept=".xlsx, .xls" />
+        <div class="carousel-partners">
+            <div class="partner-cards" id="partnerCards">
+                <!-- Partner cards will be injected here -->
+            </div>
+        </div>
+        <button class="view-all-button">See all Partners</button>
+    </section>
+    
+
+
+    <!-- <section class="our-partners">
+        <h2>Our Partners</h2>
+        <div class="partners-carousel">
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\NeyazEcoTravels.jpeg" alt="Partner 1">
+            </div>
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\ShantanuEcologicalSurveyor.jpeg" alt="Partner 2">
+            </div>
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\AdeshHealthService.jpeg" alt="Partner 3">
+            </div>
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\YashrajConsultancy.jpeg" alt="Partner 4">
+            </div>
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\AniEcoMotors.jpeg" alt="Partner 5">
+            </div>
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\ManojAdventures.jpeg" alt="Partner 6">
+            </div>
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\SarveshTourServices2.jpeg" alt="Partner 7">
+            </div>
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\RohanEntertainment.jpeg" alt="Partner 8">
+            </div>
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\TahaPlanning.jpeg" alt="Partner 9">
+            </div>
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\UtkarshHealthyMeals2.jpeg" alt="Partner 10">
+            </div>
+            <div class="partner-card">
+                <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\Partners\ShreyashHobbies.jpeg" alt="Partner 11">
+            </div>
+        </div>
+    </section> -->
+
+
+      <section>
+        <h2>Connect us on</h2>
+        <ul>
+            <li>
+                <a href="https://www.facebook.com" target="_blank">
+                    <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\socialmedialogos\facebook.jpg" alt="Facebook" />
+                </a>
+            </li>
+            <li>
+                <a href="https://www.twitter.com" target="_blank">
+                    <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\socialmedialogos\XakaTwitter.jpg" alt="Twitter" />
+                </a>
+            </li>
+            <li>
+                <a href="https://www.instagram.com" target="_blank">
+                    <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\socialmedialogos\Instagram.jpg" alt="Instagram" />
+                </a>
+            </li>
+            <li>
+                <a href="https://www.pinterest.com" target="_blank">
+                    <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\socialmedialogos\pininterest.jpg" alt="Pinterest" />
+                </a>
+            </li>
+            <li>
+                <a href="https://www.youtube.com" target="_blank">
+                    <img src="D:\Projects\Semester1\WebTechnology_MidSemProject\socialmedialogos\youtube.png" alt="YouTube" />
+                </a>
+            </li>
+        </ul>
+    </section>
+    
+
+    <script src="subscribe.js"></script>
+</body>
+</html>

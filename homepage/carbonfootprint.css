@@ -1,0 +1,185 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    width: 100px; /* Adjust the width as needed */
+    cursor: pointer; /* Show pointer cursor on hover */
+}
+
+
+.nav-links {
+    display: flex;
+
+    gap: 20px;
+}
+
+.nav-links a {
+    color: black;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-right a {
+    color: black;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.nav-right a img {
+    width: 35px; /* Adjust the size of the icons */
+    height: 35px;
+}
+
+.language-select {
+    padding: 5px;
+    font-size: 14px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+.header p {
+    color: #666;
+    margin: 5px 0 0;
+}
+.trip-details, .carbon-footprint {
+    display: inline-block;
+    vertical-align: top;
+    width: 48%;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+.trip-details {
+    margin-right: 2%;
+}
+.trip-details h2, .carbon-footprint h2 {
+    font-size: 18px;
+    margin: 0 0 10px;
+}
+.trip-details .tabs {
+    display: flex;
+    margin-bottom: 20px;
+}
+.trip-details .tabs button {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+}
+.trip-details .tabs button.active {
+    background-color: #e0f7fa;
+    border-color: #00acc1;
+}
+.trip-details .trip-type {
+    margin-bottom: 20px;
+}
+.trip-details .trip-type label {
+    margin-right: 20px;
+    font-size: 14px;
+}
+.trip-details .trip-type input {
+    margin-right: 5px;
+}
+.trip-details .form-group {
+    margin-bottom: 20px;
+}
+.trip-details .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+.trip-details .form-group select, .trip-details .form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.trip-details .form-group .input-group {
+    display: flex;
+}
+.trip-details .form-group .input-group input {
+    flex: 1;
+    margin-right: 10px;
+}
+.trip-details .form-group .input-group input:last-child {
+    margin-right: 0;
+}
+.trip-details .calculate-btn {
+    text-align: center;
+}
+.trip-details .calculate-btn button {
+    padding: 10px 20px;
+    background-color: #00796b;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.carbon-footprint {
+    text-align: center;
+}
+.carbon-footprint img {
+    max-width: 100%;
+    height: auto;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #666;
+}
+.footer img {
+    vertical-align: middle;
+    width: 80px;
+    height: 47px;
+}

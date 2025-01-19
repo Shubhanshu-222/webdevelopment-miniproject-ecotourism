@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfilePage</title>
+    <link rel="stylesheet" href="profilepage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Leaflet.js for geolocation and distance calculation -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <img src="D:/Projects/Semester1/WebTechnology_MidSemProject/Ecotour_logo/Ecotour_leaf.jpeg" alt="Ecotour Logo">
+        </div>
+        <div class="nav-right">
+            <a href="#" class="support">
+                <img src="D:/Projects/Semester1/WebTechnology_MidSemProject/icons/support_icon.jpeg" alt="Support Icon"> Support
+            </a>
+            <a href="#" class="account">
+                <img src="D:/Projects/Semester1/WebTechnology_MidSemProject/icons/my_account_icon.jpeg" alt="Account Icon"> My Account
+            </a>
+        </div>
+    </header>
+
+<div class="container">
+    <div class="header">
+        <h1>Profile Page</h1>
+        <p>Manage your travel log and itinerary</p>
+    </div>
+    <div class="section travel-log">
+        <h2>Travel Log</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Mode</th>
+                    <th>Distance (km)</th>
+                    <th>Trip Type</th>
+                    <th>Passengers</th>
+                    <th>Class</th>
+                    <th>Carbon Footprint (kg CO2)</th>
+                </tr>
+            </thead>
+            <tbody id="travel-log-body">
+                <tr>
+                    <td><input type="text" placeholder="From"></td>
+                    <td><input type="text" placeholder="To"></td>
+                    <td>
+                        <select>
+                            <option value="flight">Flight</option>
+                            <option value="car">Car</option>
+                            <option value="boat">Boat</option>
+                        </select>
+                    </td>
+                    <td class="distance">0</td>
+                    <td>
+                        <select>
+                            <option value="round-trip">Round Trip</option>
+                            <option value="one-way">One Way</option>
+                            <option value="multi-city">Multi City</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select>
+                            <option value="Economy">Economy</option>
+                            <option value="Premium">Premium</option>
+                        </select>
+                    </td>
+                    <td class="carbon-footprint">0</td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="add-trip-btn" onclick="addTravelLogRow()">Add Trip</button>
+        <button class="calculate-btn" onclick="calculateTravelLogFootprint()">Calculate Carbon Footprint</button>
+    </div>
+    <div class="section travel-itinerary">
+        <h2>Travel Itinerary</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Mode</th>
+                    <th>Distance (km)</th>
+                    <th>Trip Type</th>
+                    <th>Passengers</th>
+                    <th>Class</th>
+                    <th>Carbon Footprint (kg CO2)</th>
+                </tr>
+            </thead>
+            <tbody id="travel-itinerary-body">
+                <tr>
+                    <td><input type="text" placeholder="From"></td>
+                    <td><input type="text" placeholder="To"></td>
+                    <td>
+                        <select>
+                            <option value="flight">Flight</option>
+                            <option value="car">Car</option>
+                            <option value="boat">Boat</option>
+                        </select>
+                    </td>
+                    <td class="distance">0</td>
+                    <td>
+                        <select>
+                            <option value="round-trip">Round Trip</option>
+                            <option value="one-way">One Way</option>
+                            <option value="multi-city">Multi City</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select>
+                            <option value="Economy">Economy</option>
+                            <option value="Premium">Premium</option>
+                        </select>
+                    </td>
+                    <td class="carbon-footprint">0</td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="add-trip-btn" onclick="addTravelItineraryRow()">Add Trip</button>
+        <button class="calculate-btn" onclick="calculateTravelItineraryFootprint()">Calculate Carbon Footprint</button>
+    </div>
+</div>
+<script>
+    // Function to add a new row for the Travel Log table
+    function addTravelLogRow() {
+        const tableBody = document.getElementById('travel-log-body');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" placeholder="From"></td>
+            <td><input type="text" placeholder="To"></td>
+            <td>
+                <select>
+                    <option value="flight">Flight</option>
+                    <option value="car">Car</option>
+                    <option value="boat">Boat</option>
+                </select>
+            </td>
+            <td class="distance">0</td>
+            <td>
+                <select>
+                    <option value="round-trip">Round Trip</option>
+                    <option value="one-way">One Way</option>
+                    <option value="multi-city">Multi City</option>
+                </select>
+            </td>
+            <td>
+                <select>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </td>
+            <td>
+                <select>
+                    <option value="Economy">Economy</option>
+                    <option value="Premium">Premium</option>
+                </select>
+            </td>
+            <td class="carbon-footprint">0</td>
+        `;
+        tableBody.appendChild(newRow);
+    }
+
+    // Function to calculate distance using OpenStreetMap's Nominatim API and Leaflet
+    function calculateDistance(from, to, callback) {
+        const urlFrom = `https://nominatim.openstreetmap.org/search?format=json&q=${from}`;
+        fetch(urlFrom)
+            .then(response => response.json())
+            .then(dataFrom => {
+                if (dataFrom.length === 0) {
+                    alert(`Unable to find the location for "${from}"`);
+                    callback(0);
+                    return;
+                }
+
+                const fromLat = parseFloat(dataFrom[0].lat);
+                const fromLon = parseFloat(dataFrom[0].lon);
+
+                const urlTo = `https://nominatim.openstreetmap.org/search?format=json&q=${to}`;
+                fetch(urlTo)
+                    .then(response => response.json())
+                    .then(dataTo => {
+                        if (dataTo.length === 0) {
+                            alert(`Unable to find the location for "${to}"`);
+                            callback(0);
+                            return;
+                        }
+
+                        const toLat = parseFloat(dataTo[0].lat);
+                        const toLon = parseFloat(dataTo[0].lon);
+
+                        const fromPoint = L.latLng(fromLat, fromLon);
+                        const toPoint = L.latLng(toLat, toLon);
+                        const distance = fromPoint.distanceTo(toPoint) / 1000; // Convert to kilometers
+
+                        callback(distance);
+                    })
+                    .catch(err => {
+                        console.error('Error calculating "to" location:', err);
+                        callback(0);
+                    });
+            })
+            .catch(err => {
+                console.error('Error calculating "from" location:', err);
+                callback(0);
+            });
+    }
+
+    // Function to calculate the carbon footprint for the travel log
+    function calculateTravelLogFootprint() {
+        const rows = document.querySelectorAll('#travel-log-body tr');
+        rows.forEach(row => {
+            const from = row.querySelector('td:nth-child(1) input').value;
+            const to = row.querySelector('td:nth-child(2) input').value;
+            const mode = row.querySelector('td:nth-child(3) select').value;
+            const passengers = parseInt(row.querySelector('td:nth-child(6) select').value);
+            const travelClass = row.querySelector('td:nth-child(7) select').value;
+
+            calculateDistance(from, to, (distance) => {
+                row.querySelector('.distance').textContent = distance.toFixed(2);
+
+                let emissionFactor;
+                if (mode === 'flight') {
+                    emissionFactor = travelClass === 'Economy' ? 0.115 : 0.230;
+                } else if (mode === 'car') {
+                    emissionFactor = 0.120; 
+                } else if (mode === 'boat') {
+                    emissionFactor = 0.250; 
+                }
+
+                const carbonFootprint = (distance * emissionFactor) / passengers;
+                row.querySelector('.carbon-footprint').textContent = carbonFootprint.toFixed(2);
+            });
+        });
+    }
+
+    // Function to calculate the carbon footprint for the travel itinerary
+    function calculateTravelItineraryFootprint() {
+        const rows = document.querySelectorAll('#travel-itinerary-body tr');
+        rows.forEach(row => {
+            const from = row.querySelector('td:nth-child(1) input').value;
+            const to = row.querySelector('td:nth-child(2) input').value;
+            const mode = row.querySelector('td:nth-child(3) select').value;
+            const passengers = parseInt(row.querySelector('td:nth-child(6) select').value);
+            const travelClass = row.querySelector('td:nth-child(7) select').value;
+
+            calculateDistance(from, to, (distance) => {
+                row.querySelector('.distance').textContent = distance.toFixed(2);
+
+                let emissionFactor;
+                if (mode === 'flight') {
+                    emissionFactor = travelClass === 'Economy' ? 0.115 : 0.230;
+                } else if (mode === 'car') {
+                    emissionFactor = 0.120;
+                } else if (mode === 'boat') {
+                    emissionFactor = 0.250;
+                }
+
+                const carbonFootprint = (distance * emissionFactor) / passengers;
+                row.querySelector('.carbon-footprint').textContent = carbonFootprint.toFixed(2);
+            });
+        });
+    }
+
+    // Function to add a new row for the Travel Itinerary table
+    function addTravelItineraryRow() {
+        const tableBody = document.getElementById('travel-itinerary-body');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" placeholder="From"></td>
+            <td><input type="text" placeholder="To"></td>
+            <td>
+                <select>
+                    <option value="flight">Flight</option>
+                    <option value="car">Car</option>
+                    <option value="boat">Boat</option>
+                </select>
+            </td>
+            <td class="distance">0</td>
+            <td>
+                <select>
+                    <option value="round-trip">Round Trip</option>
+                    <option value="one-way">One Way</option>
+                    <option value="multi-city">Multi City</option>
+                </select>
+            </td>
+            <td>
+                <select>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </td>
+            <td>
+                <select>
+                    <option value="Economy">Economy</option>
+                    <option value="Premium">Premium</option>
+                </select>
+            </td>
+            <td class="carbon-footprint">0</td>
+        `;
+        tableBody.appendChild(newRow);
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+  <script>
+                // Toggle dropdown
+                document.querySelector('.account-menu button').addEventListener('click', function() {
+                    var dropdown = document.querySelector('.account-menu .dropdown-content');
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                });
+            
+                // Show login popup
+                document.getElementById('sign-in-link').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    document.getElementById('login-popup').style.display = 'block';
+                    document.getElementById('overlay').style.display = 'block';
+                });
+            
+                // Show signup popup
+                document.getElementById('sign-up-link').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    document.getElementById('signup-popup').style.display = 'flex';
+                    document.getElementById('overlay').style.display = 'block';
+                });
+            
+                // Close login popup
+                document.getElementById('close-login-btn').addEventListener('click', function() {
+                    document.getElementById('login-popup').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                });
+            
+                // Close signup popup
+                document.getElementById('close-signup-btn').addEventListener('click', function() {
+                    document.getElementById('signup-popup').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                });
+            
+                // Close popup if the overlay is clicked
+                document.getElementById('overlay').addEventListener('click', function() {
+                    document.getElementById('login-popup').style.display = 'none';
+                    document.getElementById('signup-popup').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                });
+            
+                // Validate login credentials
+                document.getElementById('login-form').addEventListener('submit', function(event) {
+                    event.preventDefault();
+            
+                    const email = document.getElementById('login-email').value;
+                    const password = document.getElementById('login-password').value;
+            
+                    fetch('useraccounts.json')
+                        .then(response => response.json())
+                        .then(users => {
+                            const user = users.find(user => user.email === email && user.password === password);
+                            if (user) {
+                                alert("Login successful!");
+                                // Additional actions or redirect can go here
+                                document.getElementById('login-popup').style.display = 'none';
+                                document.getElementById('overlay').style.display = 'none';
+                            } else {
+                                alert("Invalid email or password.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error loading user data:", error);
+                        });
+                });
+            
+                // Google sign-in handler
+                function onSignIn(googleUser) {
+                    var profile = googleUser.getBasicProfile();
+                    console.log('ID: ' + profile.getId());
+                    console.log('Name: ' + profile.getName());
+                    console.log('Image URL: ' + profile.getImageUrl());
+                    console.log('Email: ' + profile.getEmail());
+                }
+            
+                // Show signup popup from login popup
+                document.getElementById('signup-link-from-login').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    document.getElementById('login-popup').style.display = 'none';
+                    document.getElementById('signup-popup').style.display = 'flex';
+                });
+            
+                // Show login popup from signup popup
+                document.getElementById('login-link-from-signup').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    document.getElementById('signup-popup').style.display = 'none';
+                    document.getElementById('login-popup').style.display = 'block';
+                });
+            
+                // Signup form submit
+                document.getElementById('signup-form').addEventListener('submit', function(event) {
+                    event.preventDefault();  // Prevent the form from submitting normally
+            
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('signup-email').value;  // Updated to match the HTML ID
+                    const password = document.getElementById('signup-password').value;  // Updated to match the HTML ID
+                    const confirmPassword = document.getElementById('confirm-password').value;
+                    const mobileNumber = document.getElementById('mobile-number').value;
+            
+                    // Validate the form data
+                    if (password !== confirmPassword) {
+                        alert('Passwords do not match');
+                        return;
+                    }
+            
+                    // Retrieve users data from localStorage
+                    let users = JSON.parse(localStorage.getItem('users')) || { users: [] };  // Default to an empty users array if data is not found
+            
+                    // Ensure that users is an array
+                    if (!Array.isArray(users.users)) {
+                        users.users = [];
+                    }
+            
+                    // Check if email is already in use
+                    const emailExists = users.users.some(user => user.email === email);
+                    if (emailExists) {
+                        alert('This email is already registered.');
+                        return;
+                    }
+            
+                    // Prepare user data object
+                    const userData = {
+                        name: name,
+                        email: email,
+                        password: password,
+                        mobileNumber: mobileNumber
+                    };
+            
+                    // Add timestamp for data expiration tracking
+                    const timestamp = new Date().getTime();
+                    users.users.push(userData);  // Add new user data
+                    localStorage.setItem('users', JSON.stringify({ users: users.users, timestamp }));  // Store updated users array with timestamp
+            
+                    alert('Signup successful! Data saved locally.');
+            
+                    // Optionally, clear the form
+                    document.getElementById('signup-form').reset();
+            
+                    // Close the popup after successful signup
+                    document.getElementById('signup-popup').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                });
+            
+                
+
+
+                document.addEventListener('DOMContentLoaded', function() {
+                console.log("DOM fully loaded and parsed.");
+
+     // Check if the elements exist
+     const emailInput = document.getElementById('login-email');
+     const passwordInput = document.getElementById('login-password');
+     
+     if (!emailInput) {
+         console.error("Email input element not found!");
+     }
+     if (!passwordInput) {
+         console.error("Password input element not found!");
+     }
+
+     // Open the login popup
+     document.getElementById('open-login-btn').addEventListener('click', function() {
+         document.getElementById('login-popup').style.display = 'block';
+     });
+
+     // Sign in using local data
+     document.getElementById('login-form').addEventListener('submit', function(event) {
+         event.preventDefault(); // Prevent the form from submitting normally
+
+         const email = emailInput.value; // Accessing the email input
+         const password = passwordInput.value; // Accessing the password input
+
+         console.log('Login attempt:', email, password); // Debug log
+
+         // Retrieve users data from localStorage
+         let users = JSON.parse(localStorage.getItem('users')) || { users: [] };
+
+         // Debug log to see if users data is being retrieved
+         console.log('Users data from localStorage:', users);
+
+         // Check if the email and password match any user in the stored data
+         const user = users.users.find(user => user.email === email && user.password === password);
+
+         if (user) {
+             console.log('Login successful for:', email); // Debug log for successful login
+             alert("Login successful!");
+             closePopup(); // Close the login popup after successful login
+             // Optionally, redirect the user or show user-specific content
+         } else {
+             console.log('Invalid email or password'); // Debug log for invalid login
+             alert("Invalid email or password.");
+         }
+     });
+
+     // Close the login popup when clicking on the close button
+     document.getElementById('close-login-btn').addEventListener('click', closePopup);
+
+     // Close the popup function
+     function closePopup() {
+         document.getElementById('login-popup').style.display = 'none'; // Hide the login popup
+     }
+
+     // Handle the sign-up link click (Optional: You can add functionality to show the signup form)
+     document.getElementById('signup-link-from-login').addEventListener('click', function(event) {
+         event.preventDefault();
+         // Optionally, show signup popup and hide login popup
+         alert('Redirecting to signup page');
+         closePopup(); // Close the login popup
+         // Show signup popup (or navigate to a different page)
+     });
+ });
+
+            </script>
